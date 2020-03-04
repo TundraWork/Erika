@@ -15,7 +15,7 @@ class DataController
 
     public function single(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
     {
-        if ($request->isJson()) {
+        if (!$request->isJson()) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
         }
         $mode = isset($request->mode) ? $request->mode : false;
@@ -71,7 +71,7 @@ class DataController
 
     public function batch(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
     {
-        if ($request->isJson()) {
+        if (!$request->isJson()) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
         }
         $mode = isset($request->mode) ? $request->mode : false;
