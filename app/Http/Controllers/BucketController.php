@@ -55,7 +55,12 @@ class BucketController extends Controller
         if (!$tableSize[0]) {
             return response()->json(['code' => 400, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(400);
         }
-        $bucket_stats = $tableSize[1];
+        $bucket_stats = [
+            'sizebytes' => $tableSize[1]['sizebytes'],
+            'size' => $tableSize[1]['size'],
+            'min_date' => $tableSize[1]['min_date'],
+            'max_date' => $tableSize[1]['max_date'],
+        ];
         Cache::forever('bucket_' . $bucket_uuid, ['name' => $name, 'user_id' => $this->user['id'], 'structure' => $structure]);
         $user_data = Cache::get('user_' . $this->user['id']);
         $user_data['buckets'][] = $bucket_uuid;
@@ -81,7 +86,12 @@ class BucketController extends Controller
         if (!$tableSize[0]) {
             return response()->json(['code' => 400, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(400);
         }
-        $bucket_stats = $tableSize[1];
+        $bucket_stats = [
+            'sizebytes' => $tableSize[1]['sizebytes'],
+            'size' => $tableSize[1]['size'],
+            'min_date' => $tableSize[1]['min_date'],
+            'max_date' => $tableSize[1]['max_date'],
+        ];
         unset($bucket_stats['table']);
         unset($bucket_stats['database']);
         return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats]], 'message' => 'OK'])->setStatusCode(200);
