@@ -1,0 +1,873 @@
+openapi: 3.0.0
+info:
+  description: Simple custom structured data collection service based on ClickHouse
+  version: 1.0.0
+  title: Erika
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: User
+    description: Operations on users
+  - name: Bucket
+    description: Operations on buckets
+  - name: Spica
+    description: Collect data from clients
+paths:
+  /portal/user:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: This interface can only be used by system administrator.
+      operationId: userCreate
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  description: Unique user ID (human friendly)
+                  type: string
+              required:
+                - user_id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+  /portal/user/{user_id}:
+    get:
+      tags:
+        - User
+      summary: Get user information
+      description: This interface can only be used by the user itself
+      operationId: userInfo
+      parameters:
+        - in: path
+          name: user_id
+          description: Unique user ID (human friendly)
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+    delete:
+      tags:
+        - User
+      summary: Delete a user
+      description: This interface can only be used by system administrators.
+      operationId: userDelete
+      parameters:
+        - in: path
+          name: user_id
+          description: Unique user ID (human friendly)
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+  /portal/bucket:
+    post:
+      tags:
+        - Bucket
+      summary: Create a new bucket
+      description: ""
+      operationId: bucketCreate
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Human friendly name of the bucket. Only used in descriptions.
+                  type: string
+                structure:
+                  description: |
+                    JSON encoded bucket description data.
+                    NOTE: Switch to application/json for detailed JSON format.
+                  type: string
+              required:
+                - name
+                - structure
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BucketStructure"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        $ref: "#/components/schemas/Bucket"
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+  /portal/bucket/{bucket_id}:
+    get:
+      tags:
+        - Bucket
+      summary: Get bucket information
+      description: This interface can only be used by the creator user of the bucket
+      operationId: bucketInfo
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        $ref: "#/components/schemas/Bucket"
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+    delete:
+      tags:
+        - Bucket
+      summary: Delete a bucket
+      description: This interface can only be used by the creator user of the bucket
+      operationId: bucketDelete
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+  /spica/{bucket_id}/single:
+    post:
+      tags:
+        - Spica
+      summary: Submit a single (one-row) statistic
+      description: Submit a single (one-row) statistic. This interface provides clients the flexbility to submit data columns in custom order.
+      operationId: spicaSingle
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSingle"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+  /spica/{bucket_id}/single/compact:
+    post:
+      tags:
+        - Spica
+      summary: Submit a single (one-row) statistic in compact format
+      description: Submit a single (one-row) statistic in compact format. This interface saves transfer bandwidth by omiting column names in data.
+      operationId: spicaSingleCompact
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSingleCompact"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+  /spica/{bucket_id}/batch:
+    post:
+      tags:
+        - Spica
+      summary: Submit a batch (multi-rows) statistic
+      description: Submit a batch (multi-rows) statistic. This interface provides clients the flexbility to submit data columns in custom order. Always prefer batch submit over single submit to improve performance.
+      operationId: spicaBatch
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataBatch"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+  /spica/{bucket_id}/batch/compact:
+    post:
+      tags:
+        - Spica
+      summary: Submit a batch (multi-rows) statistic in compact format
+      description: Submit a batch (multi-rows) statistic in compact format. This interface saves transfer bandwidth by omiting column names in data. Always prefer batch submit over single submit to improve performance.
+      operationId: spicaBatchCompact
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataBatchCompact"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "409":
+          description: Object exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+servers:
+  - url: https://data.api.railgun.co/v1
+components:
+  securitySchemes:
+    User_authentication_ID:
+      type: apiKey
+      name: X-Erika-User-Id
+      in: header
+    User_authentication_Token:
+      type: apiKey
+      name: X-Erika-User-Token
+      in: header
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        token:
+          type: string
+        buckets:
+          type: array
+          items:
+            type: string
+    BucketStructure:
+      type: object
+      properties:
+        columns:
+          type: object
+          properties:
+            string:
+              type: string
+          description: This dictionary represents columns of the bucket. Each element in this dictionary represents a column. Key represents name of the column, value represents data type of the column.
+        date_column:
+          type: string
+          description: The name of a Date type column. This column will be used for bucket statics. Query performance will NOT be influenced by this value. You MUST add at least one Date type column in a bucket.
+        primary_keys:
+          type: array
+          items:
+            type: string
+          description: This array represents primary keys of the bucket. Each string in this dictionary represents the name of a column which will be set as a primary key. Query performance WILL be influenced by this value.
+    Bucket:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: Human friendly name of the bucket.
+        structure:
+          $ref: "#/components/schemas/BucketStructure"
+        stats:
+          type: object
+          properties:
+            sizebytes:
+              type: string
+            size:
+              type: string
+            min_date:
+              type: string
+            max_date:
+              type: string
+          description: Statistic data of the bucket.
+    DataSingle:
+      type: object
+      properties:
+        string:
+          type: string
+      description: This dictionary represents a single (one-row) statistic data. Keys represent column name, values represent value.
+    DataBatch:
+      type: array
+      items:
+        $ref: "#/components/schemas/DataSingle"
+      description: This array represents a batch (multi-rows) statistic data.
+    DataSingleCompact:
+      type: array
+      items:
+        type: string
+      description: This array represents a single (one-row) statistic data. Each value corresponds a column of the bucket. Value order MUST be same with bucket column order.
+    DataBatchCompact:
+      type: array
+      items:
+        $ref: "#/components/schemas/DataSingleCompact"
+      description: This array represents a batch (multi-rows) statistic data.
