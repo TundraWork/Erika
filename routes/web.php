@@ -5,7 +5,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'v1'], function () use ($router) {
-    $router->group(['prefix' => 'portal', 'middleware' => 'Authenticate'], function () use ($router) {
+    $router->group(['prefix' => 'portal', 'middleware' => ['CORS', 'Authenticate']], function () use ($router) {
         $router->group(['prefix' => 'user'], function () use ($router) {
             $router->post('/{user_id}', 'UserController@create');
             $router->get('/{user_id}', 'UserController@info');
