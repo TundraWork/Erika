@@ -10,15 +10,11 @@ use Webpatser\Uuid\Uuid;
 class UserController extends Controller
 {
 
-    public function create(Request $request)
+    public function create(string $user_id)
     {
         if (!$this->user['admin']) {
             return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this interface.'])->setStatusCode(403);
         }
-        if (!$request->has('user_id')) {
-            return response()->json(['code' => 400, 'message' => 'Bad Request: missing parameters.'])->setStatusCode(400);
-        }
-        $user_id = $request->input('user_id');
         if (Cache::has('user_' . $user_id)) {
             return response()->json(['code' => 409, 'message' => 'Conflict: User already exists.'])->setStatusCode(409);
         }

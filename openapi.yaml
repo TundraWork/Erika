@@ -14,24 +14,20 @@ tags:
   - name: Spica
     description: Collect data from clients
 paths:
-  /portal/user:
+  /portal/user/{user_id}:
     post:
       tags:
         - User
       summary: Create a new user
       description: This interface can only be used by system administrator.
       operationId: userCreate
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  description: Unique user ID (human friendly)
-                  type: string
-              required:
-                - user_id
+      parameters:
+        - in: path
+          name: user_id
+          description: Unique user ID (human friendly)
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -96,7 +92,6 @@ paths:
       security:
         - User_authentication_ID: []
         - User_authentication_Token: []
-  /portal/user/{user_id}:
     get:
       tags:
         - User
@@ -255,7 +250,7 @@ paths:
       operationId: bucketCreate
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               type: object
               properties:
@@ -263,16 +258,8 @@ paths:
                   description: Human friendly name of the bucket. Only used in descriptions.
                   type: string
                 structure:
-                  description: |
-                    JSON encoded bucket description data.
-                    NOTE: Switch to application/json for detailed JSON format.
-                  type: string
-              required:
-                - name
-                - structure
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BucketStructure"
+                  description: Bucket structure description.
+                  $ref: "#/components/schemas/BucketStructure"
       responses:
         "200":
           description: OK
@@ -822,7 +809,7 @@ components:
           description: This dictionary represents columns of the bucket. Each element in this dictionary represents a column. Key represents name of the column, value represents data type of the column.
         date_column:
           type: string
-          description: The name of a Date type column. This column will be used for bucket statics. Query performance will NOT be influenced by this value. You MUST add at least one Date type column in a bucket.
+          description: The name of a Date type column. This column will be used for bucket statistics. Query performance will NOT be influenced by this value. You MUST add at least one Date type column in a bucket.
         primary_keys:
           type: array
           items:
