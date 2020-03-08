@@ -797,7 +797,12 @@ components:
         buckets:
           type: array
           items:
-            type: string
+            type: object
+            properties:
+              name:
+                type: string
+              id:
+                type: string
     BucketStructure:
       type: object
       properties:

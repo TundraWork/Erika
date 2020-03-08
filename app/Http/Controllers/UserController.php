@@ -41,7 +41,18 @@ class UserController extends Controller
             return response()->json(['code' => 404, 'message' => 'Not Found: User does not exist.'])->setStatusCode(404);
         }
         if ($user_data = Cache::get('user_' . $user_id)) {
-            return response()->json(['code' => 200, 'data' => ['user' => ['id' => $user_id, 'token' => $user_data['token'], 'buckets' => $user_data['buckets']]], 'message' => 'OK'])->setStatusCode(200);
+            $buckets = [];
+            foreach ($user_data['buckets'] as $bucket_id) {
+                if ($bucket_data = Cache::get('bucket_' . $bucket_id)) {
+                    $buckets[] = [
+                        'name' => $bucket_data['name'],
+                        'id' => $bucket_id,
+                    ];
+                } else {
+                    return response()->json(['code' => 500, 'message' => 'Server Error: Failed to get bucket data, this may be a system issue.'])->setStatusCode(500);
+                }
+            }
+            return response()->json(['code' => 200, 'data' => ['user' => ['id' => $user_id, 'token' => $user_data['token'], 'buckets' => $buckets]], 'message' => 'OK'])->setStatusCode(200);
         } else {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to get user data, try again later.'])->setStatusCode(500);
         }
