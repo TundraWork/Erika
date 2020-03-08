@@ -1,8 +1,8 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
-    "license": "MIT",
+    "name": "TundraWork/Erika",
+    "description": "Simple custom structured data collection service based on ClickHouse.",
+    "keywords": ["clickhouse", "database", "structured", "data", "collection", "lumen"],
+    "license": "Apache 2.0",
     "type": "project",
     "require": {
         "php": "^7.4",
