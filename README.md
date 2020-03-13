@@ -1,6 +1,6 @@
 # Erika
 
-Simple custom structured data collection service based on ClickHouse
+Simple custom structured data collecting service based on ClickHouse
 
 ## Requirements
 
@@ -37,7 +37,7 @@ Fields start with `USER_` are used for authorizing as admin user.
 
 Do not delete any items.
 
-### Webserver Config
+### Web Server Config
 
 Configuration of your web server should be same with apps using [Laravel Framework](https://laravel.com/docs/6.x#web-server-configuration).
 

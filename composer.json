@@ -1,6 +1,6 @@
 {
     "name": "TundraWork/Erika",
-    "description": "Simple custom structured data collection service based on ClickHouse.",
+    "description": "Simple custom structured data collecting service based on ClickHouse.",
     "keywords": ["clickhouse", "database", "structured", "data", "collection", "lumen"],
     "license": "Apache 2.0",
     "type": "project",

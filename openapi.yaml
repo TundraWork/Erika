@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: Simple custom structured data collection service based on ClickHouse
+  description: Simple custom structured data collecting service based on ClickHouse
   version: 1.0.0
   title: Erika
   license:
