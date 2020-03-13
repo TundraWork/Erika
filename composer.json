@@ -1,13 +1,13 @@
 {
-    "name": "TundraWork/Erika",
+    "name": "tundrawork/erika",
     "description": "Simple custom structured data collecting service based on ClickHouse.",
     "keywords": ["clickhouse", "database", "structured", "data", "collection", "lumen"],
     "license": "Apache 2.0",
     "type": "project",
     "require": {
         "php": "^7.4",
-        "illuminate/redis": "^6.17",
-        "laravel/lumen-framework": "^6.0",
+        "illuminate/redis": "^7.0",
+        "laravel/lumen-framework": "^7.0",
         "predis/predis": "^1.1",
         "smi2/phpclickhouse": "^1.3",
         "webpatser/laravel-uuid": "^3.0",
