@@ -19,6 +19,7 @@ class DataController
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
         }
         $mode = isset($request->mode) ? $request->mode : false;
+        $compact = false;
         switch ($mode) {
             case 'compact':
                 $compact = true;
@@ -75,6 +76,7 @@ class DataController
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
         }
         $mode = isset($request->mode) ? $request->mode : false;
+        $compact = false;
         switch ($mode) {
             case 'compact':
                 $compact = true;
