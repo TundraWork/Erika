@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Cache;
 use Exception;
-use Illuminate\Http\Request;
 use Webpatser\Uuid\Uuid;
 
 class UserController extends Controller
