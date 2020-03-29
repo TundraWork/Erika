@@ -11,6 +11,8 @@ tags:
     description: Operations on users
   - name: Bucket
     description: Operations on buckets
+  - name: Query
+    description: Perform queries on buckets
   - name: Spica
     description: Collect data from clients
 paths:
@@ -258,7 +260,6 @@ paths:
                   description: Human friendly name of the bucket. Only used in descriptions.
                   type: string
                 structure:
-                  description: Bucket structure description.
                   $ref: "#/components/schemas/BucketStructure"
       responses:
         "200":
@@ -425,6 +426,86 @@ paths:
                 properties:
                   code:
                     type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
+  /portal/query/{bucket_id}:
+    post:
+      tags:
+        - Query
+      summary: Perform query on a bucket
+      description: This interface can only be used by the creator user of the bucket
+      operationId: query
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Query"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    $ref: "#/components/schemas/QueryResult"
                   message:
                     type: string
         "400":
@@ -842,6 +923,20 @@ components:
             max_date:
               type: string
           description: Statistic data of the bucket.
+    Query:
+      type: object
+      properties:
+        query:
+          type: string
+      description: SQL query string. Should contain one "FROM BUCKET" clause.
+    QueryResult:
+      type: array
+      items:
+        type: object
+        properties:
+          example_data:
+            type: object
+      description: SQL query result. Each object in the array represents a row of result.
     DataSingle:
       type: object
       properties:

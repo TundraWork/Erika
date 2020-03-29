@@ -16,6 +16,9 @@ $router->group(['prefix' => 'v1'], function () use ($router) {
             $router->get('/{bucket_id}', 'BucketController@info');
             $router->delete('/{bucket_id}', 'BucketController@destroy');
         });
+        $router->group(['prefix' => 'query'], function () use ($router) {
+            $router->post('/{bucket_id}', 'QueryController@do');
+        });
     });
     $router->group(['prefix' => 'spica'], function () use ($router) {
         $router->post('/{bucket_id}/single[/{mode}]', 'DataController@single');
