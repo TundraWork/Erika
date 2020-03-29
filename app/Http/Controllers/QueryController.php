@@ -26,6 +26,9 @@ class QueryController extends Controller
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
+        if (strpos($data['query'], 'SELECT ') !== 0) {
+            return response()->json(['code' => 400, 'message' => 'Bad Request: query string should start with "SELECT" clause.'])->setStatusCode(400);
+        }
         if (substr_count($data['query'], 'FROM BUCKET') !== 1) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: query string should contain one "FROM BUCKET" clause.'])->setStatusCode(400);
         }

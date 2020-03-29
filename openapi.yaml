@@ -928,7 +928,7 @@ components:
       properties:
         query:
           type: string
-      description: SQL query string. Should contain one "FROM BUCKET" clause.
+      description: SQL query string. Should start with "SELECT" clause. Should contain one "FROM BUCKET" clause.
     QueryResult:
       type: array
       items:
