@@ -6,12 +6,8 @@ use App\Service\ClickHouseServiceInterface;
 use Cache;
 use Illuminate\Http\Request;
 
-class QueryController
+class QueryController extends Controller
 {
-
-    public function __construct(Request $request)
-    {
-    }
 
     public function do(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
     {
