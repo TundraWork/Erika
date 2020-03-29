@@ -33,7 +33,7 @@ class BucketController extends Controller
         if (!isset($data['structure']['columns']) || !isset($data['structure']['date_column']) || !isset($data['structure']['primary_keys'])) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: missing object in structure.'])->setStatusCode(400);
         }
-        if (!$ClickHouse->connect()) {
+        if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
         try {
@@ -81,7 +81,7 @@ class BucketController extends Controller
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
-        if (!$ClickHouse->connect()) {
+        if (!$ClickHouse->connect('read', true)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
         $tableSize = $ClickHouse->tableSize('data_' . $bucket_id);
@@ -110,7 +110,7 @@ class BucketController extends Controller
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
-        if (!$ClickHouse->connect()) {
+        if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
         $dropTable = $ClickHouse->dropTable('buffer_' . $bucket_id);

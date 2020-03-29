@@ -9,19 +9,22 @@ class ClickHouseService implements ClickHouseServiceInterface
 {
     protected Client $clickHouseInstance;
 
-    public function connect(): bool
+    public function connect(string $user, bool $readonly): bool
     {
+        if (!app('config')->has('clickhouse.user.' . $user)) {
+            return false;
+        }
         try {
             $clickHouse = new Client([
                 'host' => config('clickhouse.host'),
                 'port' => config('clickhouse.port'),
-                'username' => config('clickhouse.username'),
-                'password' => config('clickhouse.password')
+                'username' => config('clickhouse.user.' . $user . '.username'),
+                'password' => config('clickhouse.user.' . $user . '.password'),
+                'readonly' => $readonly,
             ]);
             $clickHouse->database(config('clickhouse.database'));
-            $clickHouse->setTimeout(1.5);
-            $clickHouse->setTimeout(10);
-            $clickHouse->setConnectTimeOut(5);
+            $clickHouse->setTimeout(8);
+            $clickHouse->setConnectTimeOut(2);
         } catch (Throwable $clickHouseException) {
             return false;
         }
@@ -152,5 +155,22 @@ class ClickHouseService implements ClickHouseServiceInterface
             return [false, strtok($clickHouseException->getMessage(), chr(10))];
         }
         return [true, 'OK'];
+    }
+
+    public function query(string $query): array
+    {
+        if (empty($query)) {
+            return [false, 'Empty query string'];
+        }
+        try {
+            $rows = $this->clickHouseInstance->select($query)->count();
+            if ($rows > 1000) {
+                return [false, 'More than 1000 rows selected, please add more clauses to reduce number of rows.'];
+            }
+            $query_data = $this->clickHouseInstance->select($query)->rows();
+        } catch (Throwable $clickHouseException) {
+            return [false, strtok($clickHouseException->getMessage(), chr(10))];
+        }
+        return [true, $query_data];
     }
 }

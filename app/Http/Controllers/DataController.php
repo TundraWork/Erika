@@ -40,7 +40,7 @@ class DataController
             if (count($data) !== count($bucket_data['structure']['columns'])) {
                 return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
             }
-            if (!$ClickHouse->connect()) {
+            if (!$ClickHouse->connect('write', false)) {
                 return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
             }
             $insert = $ClickHouse->insert('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
@@ -59,7 +59,7 @@ class DataController
                 $values[] = $data[$column_name];
             }
             $columns = array_keys($data);
-            if (!$ClickHouse->connect()) {
+            if (!$ClickHouse->connect('write', false)) {
                 return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
             }
             $insert = $ClickHouse->insert('buffer_' . $bucket_id, $values, $columns);
@@ -114,7 +114,7 @@ class DataController
                 $data[] = $values;
             }
         }
-        if (!$ClickHouse->connect()) {
+        if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
         $insert = $ClickHouse->insertBatch('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
