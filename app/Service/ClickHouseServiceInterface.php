@@ -14,6 +14,8 @@ interface ClickHouseServiceInterface
 
     public function dropTable(string $name): array;
 
+    public function truncateTable(string $name): array;
+
     public function tableSize(string $name): array;
 
     public function insert(string $table, array $data, array $columns): array;

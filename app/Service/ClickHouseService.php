@@ -110,6 +110,19 @@ class ClickHouseService implements ClickHouseServiceInterface
         return [true, 'OK'];
     }
 
+    public function truncateTable(string $name): array
+    {
+        if (empty($name)) {
+            return [false, 'Empty table name'];
+        }
+        try {
+            $this->clickHouseInstance->write('TRUNCATE TABLE IF EXISTS "' . $name . '"');
+        } catch (Throwable $clickHouseException) {
+            return [false, strtok($clickHouseException->getMessage(), chr(10))];
+        }
+        return [true, 'OK'];
+    }
+
     public function tableSize(string $name): array
     {
         if (empty($name)) {
