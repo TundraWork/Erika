@@ -49,9 +49,6 @@ class DataController
             }
             return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
         } else {
-            if (count($data) !== count($bucket_data['structure']['columns'])) {
-                return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
-            }
             foreach ($bucket_data['structure']['columns'] as $column_name => $column_value) {
                 if (!isset($data[$column_name])) {
                     return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
@@ -101,9 +98,6 @@ class DataController
                 }
                 $data[] = $dataAtom;
             } else {
-                if (count($dataAtom) !== count($bucket_data['structure']['columns'])) {
-                    return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
-                }
                 $values = [];
                 foreach ($bucket_data['structure']['columns'] as $column_name => $column_value) {
                     if (!isset($dataAtom[$column_name])) {
