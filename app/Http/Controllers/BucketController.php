@@ -99,6 +99,27 @@ class BucketController extends Controller
         return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats]], 'message' => 'OK'])->setStatusCode(200);
     }
 
+    public function empty(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
+    {
+        if (!Cache::has('bucket_' . $bucket_id)) {
+            return response()->json(['code' => 404, 'message' => 'Not Found: Bucket does not exist.'])->setStatusCode(404);
+        }
+        $bucket_data = Cache::get('bucket_' . $bucket_id);
+        if (!$this->user['admin']) {
+            if ($bucket_data['user_id'] !== $this->user['id']) {
+                return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
+            }
+        }
+        if (!$ClickHouse->connect('write', false)) {
+            return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
+        }
+        $truncateTable = $ClickHouse->truncateTable('data_' . $bucket_id);
+        if (!$truncateTable[0]) {
+            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $truncateTable[1]])->setStatusCode(400);
+        }
+        return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
+    }
+
     public function destroy(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
     {
         if (!Cache::has('bucket_' . $bucket_id)) {

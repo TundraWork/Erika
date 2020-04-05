@@ -98,7 +98,7 @@ paths:
       tags:
         - User
       summary: Get user information
-      description: This interface can only be used by the user itself
+      description: This interface can only be used by the user itself.
       operationId: userInfo
       parameters:
         - in: path
@@ -330,7 +330,7 @@ paths:
       tags:
         - Bucket
       summary: Get bucket information
-      description: This interface can only be used by the creator user of the bucket
+      description: This interface can only be used by the creator user of the bucket.
       operationId: bucketInfo
       parameters:
         - in: path
@@ -403,11 +403,83 @@ paths:
       security:
         - User_authentication_ID: []
         - User_authentication_Token: []
+    put:
+      tags:
+        - Bucket
+      summary: Empty a bucket
+      description: This interface will delete all data in the bucket while keeping the bucket itself. This interface can only be used by the creator user of the bucket.
+      operationId: bucketEmpty
+      parameters:
+        - in: path
+          name: bucket_id
+          required: true
+          description: Bucket ID (UUID)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
     delete:
       tags:
         - Bucket
       summary: Delete a bucket
-      description: This interface can only be used by the creator user of the bucket
+      description: This interface can only be used by the creator user of the bucket.
       operationId: bucketDelete
       parameters:
         - in: path
@@ -480,7 +552,7 @@ paths:
       tags:
         - Query
       summary: Perform query on a bucket
-      description: This interface can only be used by the creator user of the bucket
+      description: This interface can only be used by the creator user of the bucket.
       operationId: query
       parameters:
         - in: path
