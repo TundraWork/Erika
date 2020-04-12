@@ -1,5 +1,7 @@
 # Erika
 
+[![CodeFactor](https://www.codefactor.io/repository/github/tundrawork/erika/badge?s=633fcb6a919508fd043f8c8a971576b79fa2a4c2)](https://www.codefactor.io/repository/github/tundrawork/erika)
+
 Simple custom structured data collecting service based on ClickHouse
 
 ## Requirements
@@ -15,7 +17,7 @@ Simple custom structured data collecting service based on ClickHouse
 ## Installation
 
 ```bash
-git pull git@git.oott123.com:tundra/erika.git
+git pull git@github.com:TundraWork/Erika.git
 mv erika /srv/www/erika
 cd /srv/www/erika
 composer install
