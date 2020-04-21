@@ -1008,7 +1008,7 @@ components:
         properties:
           example_data:
             type: object
-      description: SQL query result. Each object in the array represents a row of result.
+      description: SQL query result. Each object in the array represents a row of result. Will return an error if more than 1000 rows selected by the query.
     DataSingle:
       type: object
       properties:

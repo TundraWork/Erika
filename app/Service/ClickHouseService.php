@@ -175,6 +175,16 @@ class ClickHouseService implements ClickHouseServiceInterface
         if (empty($query)) {
             return [false, 'Empty query string'];
         }
+        $splited = explode(' ', $query);
+        $limit_position = array_search('LIMIT', $splited);
+        if ($limit_position !== false) {
+            if ((int) $splited[$limit_position + 1] > 1001) {
+                $splited[$limit_position + 1] = '1001';
+                $query = implode(' ', $splited);
+            }
+        } else {
+            $query .= ' LIMIT 1001';
+        }
         try {
             $rows = $this->clickHouseInstance->select($query)->count();
             if ($rows > 1000) {
