@@ -7,8 +7,8 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    protected $client = [];
-    protected $user = [];
+    protected array $client = [];
+    protected array $user = [];
 
     public function __construct(Request $request)
     {
