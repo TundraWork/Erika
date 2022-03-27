@@ -8,7 +8,7 @@ Simple custom structured data collecting service based on ClickHouse
 
 - HTTP web server
 - A CGI for communicating between web server and PHP (use PHP-FPM for Nginx)
-- PHP `^7.4`
+- PHP `^8.0`
 - Following PHP plugins: `php-curl` `php-json` `php-mbstring` `php-xml` `php-redis`
 - composer (Debian/Ubuntu: `apt install composer`)
 - Redis server (Debian/Ubuntu: `apt install redis-server`)
@@ -41,8 +41,6 @@ Do not delete any items.
 
 ### Web Server Config
 
-Configuration of your web server should be same with apps using [Laravel Framework](https://laravel.com/docs/6.x#web-server-configuration).
-
 For people using Nginx & PHP-FPM, here's a sample site config clip:
 
 ```nginx
@@ -71,7 +69,7 @@ server {
 # use socket to call php-fpm
   location ~ .+\.php($|/) {
     add_header Cache-Control private;
-    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
     include snippets/fastcgi-php.conf;
   }
 
