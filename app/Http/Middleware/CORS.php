@@ -20,11 +20,11 @@ class CORS
             'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',
-            'Access-Control-Allow-Headers'     => 'Content-Type, X-Erika-User-Id, X-Erika-User-Token, X-Requested-With'
+            'Access-Control-Allow-Headers'     => 'Content-Type, Origin, X-Erika-User-Id, X-Erika-User-Token, X-Requested-With'
         ];
         if ($request->isMethod('OPTIONS'))
         {
-            return response()->json('{"method":"OPTIONS"}', 200, $headers);
+            return response('', 200, $headers);
         }
         $response = $next($request);
         foreach($headers as $key => $value)

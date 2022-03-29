@@ -58,6 +58,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('cache');
 $app->configure('clickhouse');
 $app->configure('user');
 $app->configure('database');
