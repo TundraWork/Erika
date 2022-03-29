@@ -74,7 +74,18 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default',
+            'client' => 'predis',
+            'clusters' => [
+                'default' => [
+                    [
+                        'host' => env('REDIS_HOST', 'localhost'),
+                        'password' => env('REDIS_PASSWORD', null),
+                        'port' => env('REDIS_PORT', 6379),
+                        'prefix' => env('REDIS_PREFIX', 'erika'),
+                        'database' => 0
+                    ],
+                ],
+            ],
         ],
 
         'dynamodb' => [
