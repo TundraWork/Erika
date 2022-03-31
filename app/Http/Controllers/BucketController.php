@@ -38,6 +38,7 @@ class BucketController extends Controller
         }
         if (isset($data['id'])) {
             $bucket_id = $data['id'];
+            unset($data['id']);
         } else {
             try {
                 $bucket_id = (string)Uuid::generate();
