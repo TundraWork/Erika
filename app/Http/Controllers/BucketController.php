@@ -36,10 +36,14 @@ class BucketController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        try {
-            $bucket_id = (string)Uuid::generate();
-        } catch (Exception $e) {
-            return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
+        if (isset($data['id'])) {
+            $bucket_id = $data['id'];
+        } else {
+            try {
+                $bucket_id = (string)Uuid::generate();
+            } catch (Exception $e) {
+                return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
+            }
         }
         $createTable = $ClickHouse->createTable('data_' . $bucket_id, $data['structure']['columns'], $data['structure']['date_column'], $data['structure']['primary_keys']);
         if (!$createTable[0]) {
