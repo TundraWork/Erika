@@ -48,19 +48,19 @@ class BucketController extends Controller
         }
         $createTable = $ClickHouse->createTable('data_' . $bucket_id, $data['structure']['columns'], $data['structure']['date_column'], $data['structure']['primary_keys']);
         if (!$createTable[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $createTable[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $createTable[1]])->setStatusCode(500);
         }
         $createBuffer = $ClickHouse->createBuffer('buffer_' . $bucket_id, 'data_' . $bucket_id, 2, 30, 2, 10, 1, 10000);
         if (!$createBuffer[0]) {
             $dropTable = $ClickHouse->dropTable('data_' . $bucket_id);
             if (!$dropTable[0]) {
-                return response()->json(['code' => 400, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(400);
+                return response()->json(['code' => 500, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(500);
             }
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $createBuffer[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $createBuffer[1]])->setStatusCode(500);
         }
         $tableSize = $ClickHouse->tableSize('data_' . $bucket_id);
         if (!$tableSize[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(500);
         }
         $bucket_stats = [
             'sizebytes' => $tableSize[1]['sizebytes'],
@@ -91,7 +91,7 @@ class BucketController extends Controller
         }
         $tableSize = $ClickHouse->tableSize('data_' . $bucket_id);
         if (!$tableSize[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $tableSize[1]])->setStatusCode(500);
         }
         $bucket_stats = [
             'sizebytes' => $tableSize[1]['sizebytes'],
@@ -120,7 +120,7 @@ class BucketController extends Controller
         }
         $truncateTable = $ClickHouse->truncateTable('data_' . $bucket_id);
         if (!$truncateTable[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $truncateTable[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $truncateTable[1]])->setStatusCode(400);
         }
         return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
     }
@@ -141,11 +141,11 @@ class BucketController extends Controller
         }
         $dropTable = $ClickHouse->dropTable('buffer_' . $bucket_id);
         if (!$dropTable[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(500);
         }
         $dropTable = $ClickHouse->dropTable('data_' . $bucket_id);
         if (!$dropTable[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(500);
         }
         if ($this->user['admin']) {
             $user_data = Cache::get('user_' . $bucket_data['user_id']);

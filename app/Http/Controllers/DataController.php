@@ -45,7 +45,7 @@ class DataController
             }
             $insert = $ClickHouse->insert('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
             if (!$insert[0]) {
-                return response()->json(['code' => 400, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(400);
+                return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(400);
             }
             return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
         } else {
@@ -61,7 +61,7 @@ class DataController
             }
             $insert = $ClickHouse->insert('buffer_' . $bucket_id, $values, $columns);
             if (!$insert[0]) {
-                return response()->json(['code' => 400, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(400);
+                return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
             }
             return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
         }
@@ -113,7 +113,7 @@ class DataController
         }
         $insert = $ClickHouse->insertBatch('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
         if (!$insert[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
         }
         return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
     }

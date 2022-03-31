@@ -38,7 +38,7 @@ class QueryController extends Controller
         }
         $query = $ClickHouse->query($replaced);
         if (!$query[0]) {
-            return response()->json(['code' => 400, 'message' => 'Database Error: ' . $query[1]])->setStatusCode(400);
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $query[1]])->setStatusCode(500);
         }
         return response()->json(['code' => 200, 'message' => 'OK', 'data' => $query[1]])->setStatusCode(200);
     }
