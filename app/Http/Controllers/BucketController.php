@@ -142,7 +142,7 @@ class BucketController extends Controller
         } catch (Exception $e) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
         }
-        Cache::forever('bucket_' . $bucket_id, ['name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'owner_id' => $this->user['id'], 'query_token' => $query_token]);
+        Cache::forever('bucket_' . $bucket_id, ['name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'owner_id' => $bucket_data['owner_id'], 'query_token' => $query_token]);
         return response()->json(['code' => 200, 'data' => ['query_token' => $query_token], 'message' => 'OK'])->setStatusCode(200);
     }
 
