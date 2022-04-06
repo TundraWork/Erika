@@ -83,7 +83,7 @@ class BucketController extends Controller
         }
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if (!$this->user['admin']) {
-            if ($bucket_data['user_id'] !== $this->user['id']) {
+            if ($bucket_data['owner_id'] !== $this->user['id']) {
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
@@ -112,7 +112,7 @@ class BucketController extends Controller
         }
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if (!$this->user['admin']) {
-            if ($bucket_data['user_id'] !== $this->user['id']) {
+            if ($bucket_data['owner_id'] !== $this->user['id']) {
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
@@ -133,7 +133,7 @@ class BucketController extends Controller
         }
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if (!$this->user['admin']) {
-            if ($bucket_data['user_id'] !== $this->user['id']) {
+            if ($bucket_data['owner_id'] !== $this->user['id']) {
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
@@ -153,7 +153,7 @@ class BucketController extends Controller
         }
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if (!$this->user['admin']) {
-            if ($bucket_data['user_id'] !== $this->user['id']) {
+            if ($bucket_data['owner_id'] !== $this->user['id']) {
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
@@ -169,9 +169,9 @@ class BucketController extends Controller
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $dropTable[1]])->setStatusCode(500);
         }
         if ($this->user['admin']) {
-            $user_data = Cache::get('user_' . $bucket_data['user_id']);
+            $user_data = Cache::get('user_' . $bucket_data['owner_id']);
             unset($user_data['buckets'][array_search($bucket_id, $user_data['buckets'])]);
-            Cache::forever('user_' . $bucket_data['user_id'], $user_data);
+            Cache::forever('user_' . $bucket_data['owner_id'], $user_data);
         } else {
             $user_data = Cache::get('user_' . $this->user['id']);
             unset($user_data['buckets'][array_search($bucket_id, $user_data['buckets'])]);
