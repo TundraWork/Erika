@@ -23,6 +23,6 @@ class Controller extends BaseController
             'admin' => $request->attributes->get('user.admin'),
             'buckets' => $request->attributes->get('user.buckets'),
         ];
-        $this->token = $request->attributes->get('token');
+        $this->token = $request->attributes->get('token', '');
     }
 }
