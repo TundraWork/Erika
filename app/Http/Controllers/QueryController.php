@@ -26,17 +26,18 @@ class QueryController extends Controller
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }
-        if (strpos($data['query'], 'SELECT ') !== 0) {
+        $query_string = strtoupper($data['query']);
+        if (strpos($query_string, 'SELECT ') !== 0) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: query string should start with "SELECT" clause.'])->setStatusCode(400);
         }
-        if (substr_count($data['query'], 'FROM BUCKET') !== 1) {
+        if (substr_count($query_string, 'FROM BUCKET') !== 1) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: query string should contain one "FROM BUCKET" clause.'])->setStatusCode(400);
         }
-        $replaced = str_replace('FROM BUCKET', 'FROM `data_' . $bucket_id . '`', $data['query']);
+        $query_string = str_replace('FROM BUCKET', 'FROM `data_' . $bucket_id . '`', $query_string);
         if (!$ClickHouse->connect('read', true)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        $query = $ClickHouse->query($replaced);
+        $query = $ClickHouse->query($query_string);
         if (!$query[0]) {
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $query[1]])->setStatusCode(500);
         }
