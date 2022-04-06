@@ -9,6 +9,7 @@ class Controller extends BaseController
 {
     protected array $client = [];
     protected array $user = [];
+    protected string $token = '';
 
     public function __construct(Request $request)
     {
@@ -22,5 +23,6 @@ class Controller extends BaseController
             'admin' => $request->attributes->get('user.admin'),
             'buckets' => $request->attributes->get('user.buckets'),
         ];
+        $this->token = $request->attributes->get('token');
     }
 }

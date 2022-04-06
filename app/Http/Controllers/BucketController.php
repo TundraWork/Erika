@@ -36,15 +36,16 @@ class BucketController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        if (isset($data['id'])) {
-            $bucket_id = $data['id'];
-            unset($data['id']);
-        } else {
-            try {
+        try {
+            if (isset($data['id'])) {
+                $bucket_id = $data['id'];
+                unset($data['id']);
+            } else {
                 $bucket_id = (string)Uuid::generate();
-            } catch (Exception $e) {
-                return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
             }
+            $guest_id = (string)Uuid::generate();
+        } catch (Exception $e) {
+            return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
         }
         $createTable = $ClickHouse->createTable('data_' . $bucket_id, $data['structure']['columns'], $data['structure']['date_column'], $data['structure']['primary_keys']);
         if (!$createTable[0]) {
@@ -68,11 +69,11 @@ class BucketController extends Controller
             'min_date' => $tableSize[1]['min_date'],
             'max_date' => $tableSize[1]['max_date'],
         ];
-        Cache::forever('bucket_' . $bucket_id, ['name' => $data['name'], 'user_id' => $this->user['id'], 'structure' => $data['structure']]);
+        Cache::forever('bucket_' . $bucket_id, ['name' => $data['name'], 'structure' => $data['structure'], 'owner_id' => $this->user['id'], 'guest_id' => $guest_id]);
         $user_data = Cache::get('user_' . $this->user['id']);
         $user_data['buckets'][] = $bucket_id;
         Cache::forever('user_'. $this->user['id'], $user_data);
-        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $data['name'], 'structure' => $data['structure'], 'stats' => $bucket_stats]], 'message' => 'OK'])->setStatusCode(200);
+        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $data['name'], 'structure' => $data['structure'], 'stats' => $bucket_stats], 'query_token' => $guest_id], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function info(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
@@ -101,7 +102,7 @@ class BucketController extends Controller
         ];
         unset($bucket_stats['table']);
         unset($bucket_stats['database']);
-        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats]], 'message' => 'OK'])->setStatusCode(200);
+        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats], 'query_token' => $bucket_data['guest_id']], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function empty(string $bucket_id, ClickHouseServiceInterface $ClickHouse)

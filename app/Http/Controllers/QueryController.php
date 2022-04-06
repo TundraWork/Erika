@@ -22,7 +22,7 @@ class QueryController extends Controller
         }
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if (!$this->user['admin']) {
-            if ($bucket_data['user_id'] !== $this->user['id']) {
+            if ($bucket_data['query_token'] !== $this->token) {
                 return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
             }
         }

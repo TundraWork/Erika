@@ -276,6 +276,8 @@ paths:
                     properties:
                       bucket:
                         $ref: "#/components/schemas/Bucket"
+                      query_token:
+                        type: string
                   message:
                     type: string
         "400":
@@ -354,6 +356,8 @@ paths:
                     properties:
                       bucket:
                         $ref: "#/components/schemas/Bucket"
+                      query_token:
+                        type: string
                   message:
                     type: string
         "400":
@@ -552,7 +556,7 @@ paths:
       tags:
         - Query
       summary: Perform query on a bucket
-      description: This interface can only be used by the creator user of the bucket.
+      description: To access this interface, the client needs to use X-Erika-Query-Token header to provide query token of the bucket.
       operationId: query
       parameters:
         - in: path
@@ -625,8 +629,7 @@ paths:
                   message:
                     type: string
       security:
-        - User_authentication_ID: []
-        - User_authentication_Token: []
+        - Query_authentication_Token: []
   /spica/{bucket_id}/single:
     post:
       tags:
@@ -928,7 +931,7 @@ paths:
                   message:
                     type: string
 servers:
-  - url: https://data.api.railgun.co/v1
+  - url: https://erika.xivcdn.com/v1
 components:
   securitySchemes:
     User_authentication_ID:
@@ -938,6 +941,10 @@ components:
     User_authentication_Token:
       type: apiKey
       name: X-Erika-User-Token
+      in: header
+    Query_authentication_Token:
+      type: apiKey
+      name: X-Erika-Query-Token
       in: header
   schemas:
     User:
