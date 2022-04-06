@@ -43,7 +43,7 @@ class BucketController extends Controller
             } else {
                 $bucket_id = (string)Uuid::generate();
             }
-            $guest_id = (string)Uuid::generate();
+            $query_token = (string)Uuid::generate();
         } catch (Exception $e) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
         }
@@ -69,11 +69,11 @@ class BucketController extends Controller
             'min_date' => $tableSize[1]['min_date'],
             'max_date' => $tableSize[1]['max_date'],
         ];
-        Cache::forever('bucket_' . $bucket_id, ['name' => $data['name'], 'structure' => $data['structure'], 'owner_id' => $this->user['id'], 'guest_id' => $guest_id]);
+        Cache::forever('bucket_' . $bucket_id, ['name' => $data['name'], 'structure' => $data['structure'], 'owner_id' => $this->user['id'], 'query_token' => $query_token]);
         $user_data = Cache::get('user_' . $this->user['id']);
         $user_data['buckets'][] = $bucket_id;
         Cache::forever('user_'. $this->user['id'], $user_data);
-        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $data['name'], 'structure' => $data['structure'], 'stats' => $bucket_stats], 'query_token' => $guest_id], 'message' => 'OK'])->setStatusCode(200);
+        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $data['name'], 'structure' => $data['structure'], 'stats' => $bucket_stats], 'query_token' => $query_token], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function info(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
@@ -102,7 +102,7 @@ class BucketController extends Controller
         ];
         unset($bucket_stats['table']);
         unset($bucket_stats['database']);
-        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats], 'query_token' => $bucket_data['guest_id']], 'message' => 'OK'])->setStatusCode(200);
+        return response()->json(['code' => 200, 'data' => ['bucket' => ['id' => $bucket_id, 'name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'stats' => $bucket_stats], 'query_token' => $bucket_data['query_token']], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function empty(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
@@ -124,6 +124,26 @@ class BucketController extends Controller
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $truncateTable[1]])->setStatusCode(400);
         }
         return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
+    }
+
+    public function token(string $bucket_id)
+    {
+        if (!Cache::has('bucket_' . $bucket_id)) {
+            return response()->json(['code' => 404, 'message' => 'Not Found: Bucket does not exist.'])->setStatusCode(404);
+        }
+        $bucket_data = Cache::get('bucket_' . $bucket_id);
+        if (!$this->user['admin']) {
+            if ($bucket_data['user_id'] !== $this->user['id']) {
+                return response()->json(['code' => 403, 'message' => 'Forbidden: You have no access to this bucket.'])->setStatusCode(403);
+            }
+        }
+        try {
+            $query_token = (string)Uuid::generate();
+        } catch (Exception $e) {
+            return response()->json(['code' => 500, 'message' => 'Server Error: Failed to generate UUID, try again later.'])->setStatusCode(500);
+        }
+        Cache::forever('bucket_' . $bucket_id, ['name' => $bucket_data['name'], 'structure' => $bucket_data['structure'], 'owner_id' => $this->user['id'], 'query_token' => $query_token]);
+        return response()->json(['code' => 200, 'data' => ['query_token' => $query_token], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function destroy(string $bucket_id, ClickHouseServiceInterface $ClickHouse)

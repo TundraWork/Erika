@@ -17,6 +17,7 @@ $router->group(['prefix' => 'v1'], function () use ($router) {
             $router->post('/', 'BucketController@create');
             $router->get('/{bucket_id}', 'BucketController@info');
             $router->put('/{bucket_id}', 'BucketController@empty');
+            $router->patch('/{bucket_id}', 'BucketController@token');
             $router->delete('/{bucket_id}', 'BucketController@destroy');
         });
         $router->group(['prefix' => 'query'], function () use ($router) {
