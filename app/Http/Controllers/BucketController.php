@@ -38,6 +38,7 @@ class BucketController extends Controller
                 return response()->json(['code' => 400, 'message' => 'Bad Request: can not use reserved names as column name.'])->setStatusCode(400);
             }
             $data['structure']['columns'][$name] = $properties['type'];
+            $data['structure']['primary_keys'][] = $name;
         }
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
