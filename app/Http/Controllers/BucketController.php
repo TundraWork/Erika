@@ -33,6 +33,12 @@ class BucketController extends Controller
         if (!isset($data['structure']['columns']) || !isset($data['structure']['date_column']) || !isset($data['structure']['primary_keys'])) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: missing object in structure.'])->setStatusCode(400);
         }
+        foreach ($this->reservedColumns as $name => $properties) {
+            if (isset($data['structure']['columns'][$name])) {
+                return response()->json(['code' => 400, 'message' => 'Bad Request: can not use reserved names as column name.'])->setStatusCode(400);
+            }
+            $data['structure']['columns'][$name] = $properties['type'];
+        }
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }

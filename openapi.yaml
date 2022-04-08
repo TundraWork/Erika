@@ -712,7 +712,7 @@ paths:
       tags:
         - Spica
       summary: Submit a single (one-row) statistic
-      description: Submit a single (one-row) statistic. This interface provides clients the flexbility to submit data columns in custom order.
+      description: Submit a single (one-row) statistic. This interface provides clients the flexbility to submit data columns in custom order. Use compact format to improve performance, unless you explicitly need the flexbility in column order. Always prefer batch submit over single submit to improve performance.
       operationId: spicaSingle
       parameters:
         - in: path
@@ -787,7 +787,7 @@ paths:
       tags:
         - Spica
       summary: Submit a single (one-row) statistic in compact format
-      description: Submit a single (one-row) statistic in compact format. This interface saves transfer bandwidth by omiting column names in data.
+      description: Submit a single (one-row) statistic in compact format. This interface saves transfer bandwidth by omiting column names in data. Always prefer batch submit over single submit to improve performance.
       operationId: spicaSingleCompact
       parameters:
         - in: path
@@ -862,7 +862,7 @@ paths:
       tags:
         - Spica
       summary: Submit a batch (multi-rows) statistic
-      description: Submit a batch (multi-rows) statistic. This interface provides clients the flexbility to submit data columns in custom order. Always prefer batch submit over single submit to improve performance.
+      description: Submit a batch (multi-rows) statistic. This interface provides clients the flexbility to submit data columns in custom order. Use compact format to improve performance, unless you explicitly need the flexbility in column order.
       operationId: spicaBatch
       parameters:
         - in: path
@@ -1048,7 +1048,7 @@ components:
           properties:
             string:
               type: string
-          description: This dictionary represents columns of the bucket. Each element in this dictionary represents a column. Key represents name of the column, value represents data type of the column.
+          description: "This dictionary represents columns of the bucket. Each element in this dictionary represents a column. Key represents name of the column, value represents data type of the column. The following column names are reserved and can not be used: _timestamp, _request_ip."
         date_column:
           type: string
           description: The name of a Date type column. This column will be used for bucket statistics. Query performance will NOT be influenced by this value. You MUST add at least one Date type column in a bucket.

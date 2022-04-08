@@ -10,6 +10,7 @@ class Controller extends BaseController
     protected array $client = [];
     protected array $user = [];
     protected string $token = '';
+    protected array $reservedColumns = [];
 
     public function __construct(Request $request)
     {
@@ -24,5 +25,9 @@ class Controller extends BaseController
             'buckets' => $request->attributes->get('user.buckets'),
         ];
         $this->token = $request->attributes->get('token', '');
+        $this->reservedColumns = [
+            '_timestamp' => ['type' => 'UInt64', 'expression' => 'return (int)(microtime(true)*1000)'],
+            '_request_ip' => ['type' => 'IPv4', 'expression' => 'return $request->getClientIp();'],
+        ];
     }
 }
