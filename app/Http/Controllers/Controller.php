@@ -26,7 +26,7 @@ class Controller extends BaseController
         ];
         $this->token = $request->attributes->get('token', '');
         $this->reservedColumns = [
-            '_timestamp' => ['type' => 'UInt64', 'expression' => 'return (int)(microtime(true)*1000)'],
+            '_timestamp' => ['type' => 'UInt64', 'expression' => 'return (int)(microtime(true)*1000);'],
             '_request_ip' => ['type' => 'IPv4', 'expression' => 'return $request->getClientIp();'],
         ];
     }

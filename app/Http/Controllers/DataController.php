@@ -11,6 +11,7 @@ class DataController extends Controller
 
     public function __construct(Request $request)
     {
+        parent::__construct($request);
     }
 
     private function isBatch(Request $request)
@@ -29,7 +30,7 @@ class DataController extends Controller
         return $compact;
     }
 
-    private function getReservedColumns()
+    private function getReservedColumns(Request $request)
     {
         $data = [];
         foreach ($this->reservedColumns as $name => $properties) {
@@ -50,7 +51,7 @@ class DataController extends Controller
         if (!Cache::has('bucket_' . $bucket_id)) {
             return response()->json(['code' => 404, 'message' => 'Not Found: Bucket does not exist.'])->setStatusCode(404);
         }
-        $reserved_columns = $this->getReservedColumns();
+        $reserved_columns = $this->getReservedColumns($request);
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         if ($compact) {
             $data = array_merge($data, array_values($reserved_columns));
@@ -94,7 +95,7 @@ class DataController extends Controller
         if (!Cache::has('bucket_' . $bucket_id)) {
             return response()->json(['code' => 404, 'message' => 'Not Found: Bucket does not exist.'])->setStatusCode(404);
         }
-        $reserved_columns = $this->getReservedColumns();
+        $reserved_columns = $this->getReservedColumns($request);
         $bucket_data = Cache::get('bucket_' . $bucket_id);
         $data = [];
         foreach ($dataRaw as $dataAtom) {
