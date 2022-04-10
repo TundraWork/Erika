@@ -30,9 +30,9 @@ class QueryController extends Controller
             return response()->json(['code' => 400, 'message' => 'Bad Request: query string should start with "SELECT" clause.'])->setStatusCode(400);
         }
         if (substr_count($data['query'], 'FROM BUCKET') === 1) {
-            $query_string = str_replace('FROM BUCKET', 'FROM `data_' . $bucket_id . '`', $data['query']);
+            $query_string = str_replace('FROM BUCKET', 'FROM `buffer_' . $bucket_id . '`', $data['query']);
         } elseif (substr_count($data['query'], 'from bucket') === 1) {
-            $query_string = str_replace('from bucket', 'from `data_' . $bucket_id . '`', $data['query']);
+            $query_string = str_replace('from bucket', 'from `buffer_' . $bucket_id . '`', $data['query']);
         } else {
             return response()->json(['code' => 400, 'message' => 'Bad Request: query string should contain one "FROM BUCKET" clause.'])->setStatusCode(400);
         }
