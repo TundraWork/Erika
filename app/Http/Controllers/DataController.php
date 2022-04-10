@@ -53,16 +53,10 @@ class DataController extends Controller
         }
         $reserved_columns = $this->getReservedColumns($request);
         $bucket_data = Cache::get('bucket_' . $bucket_id);
+        $values = [];
+        $columns = array_keys($bucket_data['structure']['columns']);
         if ($compact) {
-            $data = array_merge($data, array_values($reserved_columns));
-            if (!$ClickHouse->connect('write', false)) {
-                return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
-            }
-            $insert = $ClickHouse->insert('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
-            if (!$insert[0]) {
-                return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(400);
-            }
-            return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
+            $values = array_merge($data, array_values($reserved_columns));
         } else {
             $data = array_merge($data, $reserved_columns);
             $values = [];
@@ -72,15 +66,20 @@ class DataController extends Controller
                 }
                 $values[] = $data[$column_name];
             }
-            if (!$ClickHouse->connect('write', false)) {
-                return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
-            }
-            $insert = $ClickHouse->insert('buffer_' . $bucket_id, $values, array_keys($bucket_data['structure']['columns']));
-            if (!$insert[0]) {
-                return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
-            }
-            return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
         }
+        if (!$ClickHouse->connect('write', false)) {
+            return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
+        }
+        $insert = $this->insert($bucket_id, $columns, $values, $ClickHouse);
+        if (!$insert[0]) {
+            return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
+        }
+        return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
+    }
+
+    private function insert($bucket, $columns, $values, ClickHouseServiceInterface $ClickHouse) {
+        $insert = $ClickHouse->insert('buffer_' . $bucket, $values, $columns);
+        return $insert;
     }
 
     public function batch(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
