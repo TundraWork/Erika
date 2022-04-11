@@ -71,7 +71,7 @@ class DataController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        $insert = $this->insert($bucket_id, $columns, $values, $ClickHouse, $natsService);
+        $insert = $this->insert($bucket_id, $columns, [$values], $ClickHouse, $natsService);
         if (!$insert[0]) {
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
         }
@@ -80,11 +80,11 @@ class DataController extends Controller
 
     private function insert($bucket, $columns, $values, ClickHouseServiceInterface $ClickHouse, NatsService $natsService) {
         $natsService->publishInsert($bucket, $columns, $values);
-        $insert = $ClickHouse->insert('buffer_' . $bucket, $values, $columns);
+        $insert = $ClickHouse->insertBatch('buffer_' . $bucket, $values, $columns);
         return $insert;
     }
 
-    public function batch(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
+    public function batch(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse, NatsService $natsService)
     {
         if (!$request->isJson()) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
@@ -117,7 +117,8 @@ class DataController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        $insert = $ClickHouse->insertBatch('buffer_' . $bucket_id, $data, array_keys($bucket_data['structure']['columns']));
+        $columns = array_keys($bucket_data['structure']['columns']);
+        $insert = $this->insert($bucket_id, $columns, $data, $ClickHouse, $natsService);
         if (!$insert[0]) {
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
         }

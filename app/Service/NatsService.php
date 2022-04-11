@@ -14,11 +14,17 @@ class NatsService {
     public function connect() {
         $encoder = new \Nats\Encoders\JSONEncoder();
         $options = new \Nats\ConnectionOptions();
+        $options
+            ->setHost(config('nats.host'))
+            ->setPort(config('nats.port'))
+            ->setUser(config('nats.user'))
+            ->setPass(config('nats.pass'))
+            ;
         $client = new \Nats\EncodedConnection($options, $encoder);
         $this->natsInstance = $client;
         try {
-            $this->natsInstance->connect(1);
-        } catch {
+            @$this->natsInstance->connect(1);
+        } catch (Exception $e) {
             $this->natsInstance = null;
         }
     }
@@ -27,7 +33,7 @@ class NatsService {
         if ($this->natsInstance == null) {
             return null;
         }
-        return $this->natsInstance->publish('erika.insert' . $bucket, [
+        return $this->natsInstance->publish('erika.insert.' . $bucket, [
             'columns' => $columns,
             'values' => $values
         ]);
