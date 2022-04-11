@@ -5,7 +5,7 @@ namespace App\Service;
 use \Nats\Connection;
 
 class NatsService {
-    protected Connection $natsInstance;
+    protected ?Connection $natsInstance;
 
     public function __construct() {
         $this->connect();
@@ -24,7 +24,7 @@ class NatsService {
         $this->natsInstance = $client;
         try {
             @$this->natsInstance->connect(1);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->natsInstance = null;
         }
     }
