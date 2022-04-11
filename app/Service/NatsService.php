@@ -12,10 +12,15 @@ class NatsService {
     }
 
     public function connect() {
+        $host = config('nats.host');
+        if (empty($host)) {
+            return;
+        }
+
         $encoder = new \Nats\Encoders\JSONEncoder();
         $options = new \Nats\ConnectionOptions();
         $options
-            ->setHost(config('nats.host'))
+            ->setHost(($host)
             ->setPort(config('nats.port'))
             ->setUser(config('nats.user'))
             ->setPass(config('nats.pass'))
