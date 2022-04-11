@@ -25,8 +25,7 @@ $router->group(['prefix' => 'v1'], function () use ($router) {
         });
     });
     $router->group(['prefix' => 'spica'], function () use ($router) {
-        $router->post('/{bucket_id}/single[/{mode}]', 'DataController@single');
-        $router->post('/{bucket_id}/batch[/{mode}]', 'DataController@batch');
+        $router->post('/{bucket_id}/{batch}[/{mode}]', 'DataController@do');
     });
 });
 

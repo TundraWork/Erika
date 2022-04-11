@@ -13,6 +13,6 @@ class NatsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('App\Service\NatsService', 'App\Service\NatsService');
+        $this->app->bind('App\Service\NatsServiceInterface', 'App\Service\NatsService');
     }
 }
