@@ -66,6 +66,9 @@ class DataController extends Controller
         } else {
             [$columns, $values] = $this->single($request_data, $bucket_data, $reserved_columns, $compact);
         }
+        if (!$columns) {
+            return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
+        }
         if (!$clickhouseService->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
@@ -96,7 +99,7 @@ class DataController extends Controller
             $values = [];
             foreach ($bucket_data['structure']['columns'] as $column_name => $column_type) {
                 if (!isset($data[$column_name])) {
-                    return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
+                    return [false, false];
                 }
                 $values[] = $data[$column_name];
             }
@@ -116,7 +119,7 @@ class DataController extends Controller
                 $values = [];
                 foreach ($bucket_data['structure']['columns'] as $column_name => $column_type) {
                     if (!isset($dataAtom[$column_name])) {
-                        return response()->json(['code' => 400, 'message' => 'Bad Request: Data format does not match bucket structure.'])->setStatusCode(400);
+                        return [false, false];
                     }
                     $values[] = $dataAtom[$column_name];
                 }
