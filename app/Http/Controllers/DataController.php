@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Service\ClickHouseServiceInterface;
+use App\Service\NatsService;
 use Cache;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,7 @@ class DataController extends Controller
         return $data;
     }
 
-    public function single(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse)
+    public function single(Request $request, string $bucket_id, ClickHouseServiceInterface $ClickHouse, NatsService $natsService)
     {
         if (!$request->isJson()) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: invalid body format.'])->setStatusCode(400);
@@ -70,14 +71,15 @@ class DataController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        $insert = $this->insert($bucket_id, $columns, $values, $ClickHouse);
+        $insert = $this->insert($bucket_id, $columns, $values, $ClickHouse, $natsService);
         if (!$insert[0]) {
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $insert[1]])->setStatusCode(500);
         }
         return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
     }
 
-    private function insert($bucket, $columns, $values, ClickHouseServiceInterface $ClickHouse) {
+    private function insert($bucket, $columns, $values, ClickHouseServiceInterface $ClickHouse, NatsService $natsService) {
+        $natsService->publishInsert($bucket, $columns, $values);
         $insert = $ClickHouse->insert('buffer_' . $bucket, $values, $columns);
         return $insert;
     }
