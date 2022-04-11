@@ -95,6 +95,7 @@ $app->routeMiddleware([
 
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\ClickHouseServiceProvider::class);
+$app->register(App\Providers\NatsServiceProvider::class);
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
 if ($app->environment() !== 'production') {
     $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
