@@ -17,10 +17,9 @@ class CORS
     {
         $headers = [
             'Access-Control-Allow-Origin'      => '*',
-            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, DELETE',
-            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Allow-Methods'     => 'DELETE, GET, OPTIONS, PATCH, POST',
             'Access-Control-Max-Age'           => '86400',
-            'Access-Control-Allow-Headers'     => 'Content-Type, Origin, X-Erika-User-Id, X-Erika-User-Token, X-Requested-With'
+            'Access-Control-Allow-Headers'     => 'Content-Type, Origin, X-Erika-User-Id, X-Erika-User-Token, X-Erika-Query-Token, X-Requested-With'
         ];
         if ($request->isMethod('OPTIONS'))
         {
