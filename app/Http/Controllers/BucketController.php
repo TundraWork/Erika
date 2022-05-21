@@ -148,14 +148,14 @@ class BucketController extends Controller
         if (!$ClickHouse->connect('write', false)) {
             return response()->json(['code' => 500, 'message' => 'Server Error: Failed to connect to database, try again later.'])->setStatusCode(500);
         }
-        if ($bucket_data['date_column'] !== $data['date_column']) {
-            return response()->json(['code' => 400, 'message' => 'Bad Request: can not change date column.'])->setStatusCode(400);
-        }
-        if (!(empty(array_diff($bucket_data['primary_keys'], $data['primary_keys'])) && empty(array_diff($data['primary_keys'], $bucket_data['primary_keys'])))) {
-            return response()->json(['code' => 400, 'message' => 'Bad Request: can not change primary keys.'])->setStatusCode(400);
-        }
         $structure_old = $bucket_data['structure'];
         $structure_new = $data['structure'];
+        if ($structure_old['date_column'] !== $structure_new['date_column']) {
+            return response()->json(['code' => 400, 'message' => 'Bad Request: can not change date column.'])->setStatusCode(400);
+        }
+        if (!(empty(array_diff($structure_old['primary_keys'], $structure_new['primary_keys'])) && empty(array_diff($structure_new['primary_keys'], $structure_old['primary_keys'])))) {
+            return response()->json(['code' => 400, 'message' => 'Bad Request: can not change primary keys.'])->setStatusCode(400);
+        }
         if (empty(array_diff_key($structure_new, $structure_old))) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: no new columns to add, thus nothing to do.'])->setStatusCode(400);
         }
@@ -179,7 +179,7 @@ class BucketController extends Controller
         if (!$addColumn[0]) {
             return response()->json(['code' => 500, 'message' => 'Database Error: ' . $addColumn[1]])->setStatusCode(400);
         }
-        $bucket_data['structure'] = $data['structure'];
+        $bucket_data['structure'] = $structure_new;
         Cache::forever('bucket_' . $bucket_id, $bucket_data);
         return response()->json(['code' => 200, 'data' => ['structure' => $bucket_data['structure']], 'message' => 'OK'])->setStatusCode(200);
     }
