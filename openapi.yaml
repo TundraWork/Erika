@@ -506,10 +506,8 @@ paths:
                   data:
                     type: object
                     properties:
-                      bucket:
-                        $ref: "#/components/schemas/Bucket"
-                      query_token:
-                        type: string
+                      structure:
+                        $ref: "#/components/schemas/BucketStructure"
                   message:
                     type: string
         "400":

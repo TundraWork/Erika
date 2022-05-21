@@ -181,7 +181,7 @@ class BucketController extends Controller
         }
         $bucket_data['structure'] = $data['structure'];
         Cache::forever('bucket_' . $bucket_id, $bucket_data);
-        return response()->json(['code' => 200, 'message' => 'OK'])->setStatusCode(200);
+        return response()->json(['code' => 200, 'data' => ['structure' => $bucket_data['structure']], 'message' => 'OK'])->setStatusCode(200);
     }
 
     public function empty(string $bucket_id, ClickHouseServiceInterface $ClickHouse)
