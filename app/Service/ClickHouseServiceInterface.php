@@ -16,6 +16,10 @@ interface ClickHouseServiceInterface
 
     public function truncateTable(string $name): array;
 
+    public function addColumnFirst(string $table, string $column, string $type): array;
+
+    public function addColumnAfter(string $table, string $column, string $type, string $after_column): array;
+
     public function tableSize(string $name): array;
 
     public function insert(string $table, array $data, array $columns): array;

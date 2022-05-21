@@ -479,6 +479,86 @@ paths:
       security:
         - User_authentication_ID: []
         - User_authentication_Token: []
+    post:
+      tags:
+        - Bucket
+      summary: Manipulate structure of a bucket
+      description: This interface will manipulate structure of a bucket. This interface can only be used by the creator user of the bucket.
+      operationId: bucketStructure
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                structure:
+                  $ref: "#/components/schemas/BucketStructure"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        $ref: "#/components/schemas/Bucket"
+                      query_token:
+                        type: string
+                  message:
+                    type: string
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+      security:
+        - User_authentication_ID: []
+        - User_authentication_Token: []
     patch:
       tags:
         - Bucket

@@ -123,6 +123,32 @@ class ClickHouseService implements ClickHouseServiceInterface
         return [true, 'OK'];
     }
 
+    public function addColumnFirst(string $table, string $column, string $type): array
+    {
+        if (empty($name)) {
+            return [false, 'Empty table name'];
+        }
+        try {
+            $this->clickHouseInstance->write('ALTER TABLE "' . $table . '" ADD COLUMN "' . $column . '" ' . $type . ' FIRST');
+        } catch (Throwable $clickHouseException) {
+            return [false, strtok($clickHouseException->getMessage(), chr(10))];
+        }
+        return [true, 'OK'];
+    }
+
+    public function addColumnAfter(string $table, string $column, string $type, string $after_column): array
+    {
+        if (empty($name)) {
+            return [false, 'Empty table name'];
+        }
+        try {
+            $this->clickHouseInstance->write('ALTER TABLE "' . $table . '" ADD COLUMN "' . $column . '" ' . $type . ' AFTER "' . $after_column . '"');
+        } catch (Throwable $clickHouseException) {
+            return [false, strtok($clickHouseException->getMessage(), chr(10))];
+        }
+        return [true, 'OK'];
+    }
+
     public function tableSize(string $name): array
     {
         if (empty($name)) {
