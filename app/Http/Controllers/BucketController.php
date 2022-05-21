@@ -120,7 +120,7 @@ class BucketController extends Controller
         if (empty($data = $request->json()->all())) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: failed to parse request body json.'])->setStatusCode(400);
         }
-        if (!isset($data['name']) || !isset($data['structure'])) {
+        if (!isset($data['structure'])) {
             return response()->json(['code' => 400, 'message' => 'Bad Request: missing parameters.'])->setStatusCode(400);
         }
         if ($this->user['admin']) {
